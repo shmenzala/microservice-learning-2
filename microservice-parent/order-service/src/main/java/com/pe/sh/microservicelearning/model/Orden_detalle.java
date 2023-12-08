@@ -31,7 +31,7 @@ public class Orden_detalle {
     @SequenceGenerator(name = "inc_seqOdt", sequenceName = "ORDEN_DETALLE_SEQ", initialValue = 1, allocationSize = 1)
     private String id;
     
-    @Column(name = "skuCode")
+    @Column(name = "skucode")
     private String skuCode;
     
     @Column(name = "precio")
