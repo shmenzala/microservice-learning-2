@@ -1,9 +1,14 @@
 package com.pe.sh.microservicelearning.model;
 
+import com.pe.sh.microservicelearning.configuration.StringKeyGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  *
@@ -15,28 +20,33 @@ public class Inventario {
     
     @Id
     @Column(name = "codigoinv")
+    @GeneratedValue(generator = "inc_seqInv")
+    @GenericGenerator(name = "inc_seqInv", type = StringKeyGenerator.class,
+            parameters = {@Parameter(name = "sqcName", value = "INVENTARIO_SEQ"),
+                          @Parameter(name = "identificator_id", value = "IV")})
+    @SequenceGenerator(name = "inc_seqInv", sequenceName = "INVENTARIO_SEQ", initialValue = 1, allocationSize = 1)
     private String id;
     
     @Column(name = "skucode")
     private String skuCode;
     
     @Column(name = "cantidad")
-    private String cantidad;
+    private Integer cantidad;
 
     public Inventario() {
     }
 
-    public Inventario(String id, String skuCode, String cantidad) {
+    public Inventario(String id, String skuCode, Integer cantidad) {
         this.id = id;
         this.skuCode = skuCode;
         this.cantidad = cantidad;
     }
 
-    public String getId() {
+    public String getCodigoinv() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setCodigoinv(String id) {
         this.id = id;
     }
 
@@ -48,12 +58,14 @@ public class Inventario {
         this.skuCode = skuCode;
     }
 
-    public String getCantidad() {
+    public Integer getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(String cantidad) {
+    public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
+
+    
     
 }
