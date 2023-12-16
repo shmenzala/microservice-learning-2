@@ -1,6 +1,7 @@
 package com.pe.sh.microservicelearning.service;
 
 import com.pe.sh.microservicelearning.dto.InventarioDto;
+import com.pe.sh.microservicelearning.dto.InventarioStockDto;
 import com.pe.sh.microservicelearning.model.Inventario;
 import com.pe.sh.microservicelearning.repository.InventarioRepository;
 import java.util.List;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author shmen
  */
 @Service
-public class InventarioServiceImpl implements InventarioService{
+public class InventarioServiceImpl implements InventarioService {
 
     private final InventarioRepository inventarioRepository;
 
@@ -23,19 +24,19 @@ public class InventarioServiceImpl implements InventarioService{
         this.inventarioRepository = inventarioRepository;
         this.modelMapper = modelMapper;
     }
-    
+
     @Override
     public InventarioDto create(InventarioDto dto) {
         Inventario inventario = toEntity(dto);
         Inventario nuevoInventario = inventarioRepository.save(inventario);
-    
+
         return toDto(nuevoInventario);
     }
 
     @Override
     public List<InventarioDto> findAll() {
         List<Inventario> inventario = inventarioRepository.findAll();
-        
+
         return inventario.stream().map(inv -> toDto(inv)).collect(Collectors.toList());
     }
 
@@ -43,7 +44,7 @@ public class InventarioServiceImpl implements InventarioService{
     public InventarioDto findById(String id) {
         Inventario inventario = inventarioRepository.findById(id).
                 orElseThrow(null);
-        
+
         return toDto(inventario);
     }
 
@@ -54,10 +55,10 @@ public class InventarioServiceImpl implements InventarioService{
         
         inventario.setSkuCode(dto.getSkuCode());
         inventario.setCantidad(dto.getCantidad());
-        
+
         Inventario actualizaInventario = inventarioRepository.save(inventario);
-        
-        return toDto(actualizaInventario);        
+
+        return toDto(actualizaInventario);
     }
 
     @Override
@@ -66,7 +67,14 @@ public class InventarioServiceImpl implements InventarioService{
                 orElseThrow(null);
         inventarioRepository.delete(inventario);
     }
-    
+
+    @Override
+    public List<InventarioStockDto> isInStock(List<String> skucode) {
+        List<Inventario> inventario = inventarioRepository.findBySkuCodeIn(skucode);
+        
+        return inventario.stream().map(inv -> toStockDto(inv)).collect(Collectors.toList()); 
+    }
+
     //Configuracion de ModelMapper
     protected Inventario toEntity(InventarioDto inventarioDto) {
         Inventario entity = modelMapper.map(inventarioDto, Inventario.class);
@@ -75,6 +83,13 @@ public class InventarioServiceImpl implements InventarioService{
 
     protected InventarioDto toDto(Inventario inventario) {
         InventarioDto dto = modelMapper.map(inventario, InventarioDto.class);
+        return dto;
+    }
+
+    protected InventarioStockDto toStockDto(Inventario inventario) {
+        InventarioStockDto dto = new InventarioStockDto();//modelMapper.map(inventario, InventarioStockDto.class);
+        dto.setSkuCode(inventario.getSkuCode());
+        dto.setIsInStock(inventario.getCantidad() > 0);
         return dto;
     }
     

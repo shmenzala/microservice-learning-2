@@ -12,7 +12,7 @@ ALTER TABLE INVENTARIO ADD CONSTRAINT PK_INVENTARIO PRIMARY KEY (CODIGOINV);
 
 create table ORDEN (
 CODIGOOD VARCHAR2(25),
-NUM_ORDEN VARCHAR2(25)
+NUM_ORDEN VARCHAR2(50)
 );
 
 ALTER TABLE ORDEN ADD CONSTRAINT PK_ORDEN PRIMARY KEY (CODIGOOD);
@@ -37,5 +37,11 @@ CREATE SEQUENCE INVENTARIO_SEQ START WITH 1 INCREMENT BY 1 NOCACHE;
 select * from orden;
 select * from orden_detalle;
 select * from inventario;
+
+delete from orden;
+delete from orden_detalle;
+delete from inventario;
+
+select * from orden_detalle where codigood LIKE 'OD18';
 
 COMMIT;

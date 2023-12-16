@@ -1,6 +1,7 @@
 package com.pe.sh.microservicelearning.controller;
 
 import com.pe.sh.microservicelearning.dto.InventarioDto;
+import com.pe.sh.microservicelearning.dto.InventarioStockDto;
 import com.pe.sh.microservicelearning.service.InventarioService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/inventario")
 public class InventarioController {
-    
+
     public final InventarioService inventarioService;
 
     public InventarioController(InventarioService inventarioService) {
@@ -58,5 +60,11 @@ public class InventarioController {
         inventarioService.delete(id);
         return new ResponseEntity<>("Inventario eliminado con éxito", HttpStatus.OK);
     }
-    
+
+    @GetMapping("/stock")
+    public List<InventarioStockDto> isInStock(
+            @RequestParam List<String> skucode) {
+        return inventarioService.isInStock(skucode);
+    }
+
 }
