@@ -1,6 +1,5 @@
 package com.pe.sh.microservicelearning.controller;
 
-import com.pe.sh.microservicelearning.dto.OrdenDto;
 import com.pe.sh.microservicelearning.dto.Orden_detalleDto;
 import com.pe.sh.microservicelearning.service.Orden_detalleService;
 import java.util.List;
@@ -22,13 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/ordendt")
 public class Orden_detalleController {
-    
+
     private final Orden_detalleService orden_detalleService;
 
     public Orden_detalleController(Orden_detalleService orden_detalleService) {
         this.orden_detalleService = orden_detalleService;
     }
-    
+
     @PostMapping("/{id_orden}")
     public ResponseEntity<Orden_detalleDto> crearOrden_detalle(
             @RequestBody Orden_detalleDto dto,
@@ -57,9 +56,15 @@ public class Orden_detalleController {
 
     @DeleteMapping
     public ResponseEntity<String> eliminarOrden_detalle(
-    @PathVariable(value = "codigoordet") String codigoordet){
+            @PathVariable(value = "codigoordet") String codigoordet) {
         orden_detalleService.delete(codigoordet);
         return ResponseEntity.ok("Orden eliminada con éxito.");
     }
-    
+
+    @GetMapping("/orden/{id_orden}")
+    public List<Orden_detalleDto> buscarDetallePorOrden(
+            @PathVariable(value = "id_orden") String id_orden) {
+        return orden_detalleService.buscarPorCodigoOrden(id_orden);
+    }
+
 }

@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
  */
 public class Mapper<E, T> {
 
-    private final ModelMapper modelMapper;
+    protected final ModelMapper modelMapper;
 
     public Mapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;

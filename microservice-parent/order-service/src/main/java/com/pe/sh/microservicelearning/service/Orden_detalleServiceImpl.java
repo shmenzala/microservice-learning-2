@@ -6,7 +6,6 @@ import com.pe.sh.microservicelearning.model.Orden;
 import com.pe.sh.microservicelearning.model.Orden_detalle;
 import com.pe.sh.microservicelearning.repository.OrdenRepository;
 import com.pe.sh.microservicelearning.repository.Orden_detalleRepository;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
@@ -63,10 +62,10 @@ public class Orden_detalleServiceImpl extends Mapper<Orden_detalle, Orden_detall
     public Orden_detalleDto update(Orden_detalleDto dto, String id, String id_orden) {
         Orden_detalle orden_detalle = orden_detalleRepository.findById(id).
                 orElseThrow(null);
-        
+
         Orden orden = ordenRepository.findById(id_orden)
                 .orElseThrow(null);
-        
+
         orden_detalle.setSkuCode(dto.getSkuCode());
         orden_detalle.setPrecio(dto.getPrecio());
         orden_detalle.setCantidad(dto.getCantidad());
@@ -82,6 +81,17 @@ public class Orden_detalleServiceImpl extends Mapper<Orden_detalle, Orden_detall
         Orden_detalle orden_detalle = orden_detalleRepository.findById(id).
                 orElseThrow(null);
         orden_detalleRepository.delete(orden_detalle);
+    }
+
+    @Override
+    public List<Orden_detalleDto> buscarPorCodigoOrden(String id_orden) {
+        Orden orden = ordenRepository.findById(id_orden)
+                .orElseThrow(null);
+        
+        List<Orden_detalle> orden_detalle = orden_detalleRepository.findAllByOrden(orden);
+        
+        //return toDto(orden_detalle, Orden_detalleDto.class);
+        return orden_detalle.stream().map(ordenes_det -> toDto(ordenes_det, Orden_detalleDto.class)).collect(Collectors.toList());
     }
 
 }

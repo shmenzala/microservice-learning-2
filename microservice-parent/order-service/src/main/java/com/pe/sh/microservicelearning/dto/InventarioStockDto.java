@@ -4,27 +4,17 @@ package com.pe.sh.microservicelearning.dto;
  *
  * @author shmen
  */
-public class InventarioDto {
+public class InventarioStockDto {
     
-    private String codigoinv;
     private String skuCode;
-    private Integer cantidad;
+    private boolean isInStock;
 
-    public InventarioDto() {
+    public InventarioStockDto() {
     }
 
-    public InventarioDto(String codigoinv, String skuCode, Integer cantidad) {
-        this.codigoinv = codigoinv;
+    public InventarioStockDto(String skuCode, boolean isInStock) {
         this.skuCode = skuCode;
-        this.cantidad = cantidad;
-    }
-
-    public String getCodigoinv() {
-        return codigoinv;
-    }
-
-    public void setCodigoinv(String codigoinv) {
-        this.codigoinv = codigoinv;
+        this.isInStock = isInStock;
     }
 
     public String getSkuCode() {
@@ -35,16 +25,12 @@ public class InventarioDto {
         this.skuCode = skuCode;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
+    public boolean isIsInStock() {
+        return isInStock;
     }
 
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    public void setIsInStock(boolean isInStock) {
+        this.isInStock = isInStock;
     }
-
-    
-    
-    
     
 }

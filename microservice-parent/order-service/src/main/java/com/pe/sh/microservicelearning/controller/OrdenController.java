@@ -1,6 +1,8 @@
 package com.pe.sh.microservicelearning.controller;
 
 import com.pe.sh.microservicelearning.dto.OrdenDto;
+import com.pe.sh.microservicelearning.dto.OrdenYDetallesDto;
+import com.pe.sh.microservicelearning.dto.Orden_detalleDto;
 import com.pe.sh.microservicelearning.service.OrdenService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -57,6 +59,12 @@ public class OrdenController {
     @PathVariable(value = "codigood") String codigood){
         ordenService.delete(codigood);
         return ResponseEntity.ok("Orden eliminada con éxito.");
+    }
+    
+    @PostMapping("/orderAndDetails")
+    public ResponseEntity<OrdenDto> crearOrdenYDetalles(
+            @RequestBody OrdenYDetallesDto odtdto) {
+        return new ResponseEntity<>(ordenService.crearOrdenYDetalles(odtdto), HttpStatus.OK);
     }
     
 }

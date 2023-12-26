@@ -19,4 +19,6 @@ public interface Orden_detalleService {
     
     public void delete(String id);
     
+    public List<Orden_detalleDto> buscarPorCodigoOrden(String id_orden);
+    
 }
