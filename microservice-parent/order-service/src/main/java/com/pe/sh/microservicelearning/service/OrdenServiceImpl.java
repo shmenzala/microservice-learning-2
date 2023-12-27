@@ -30,13 +30,13 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
 
     private final Orden_detalleRepository orden_detalleRepository;
 
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
-    public OrdenServiceImpl(OrdenRepository ordenRepository, Orden_detalleRepository orden_detalleRepository, WebClient webClient, ModelMapper modelMapper) {
+    public OrdenServiceImpl(OrdenRepository ordenRepository, Orden_detalleRepository orden_detalleRepository, WebClient.Builder webClientBuilder, ModelMapper modelMapper) {
         super(modelMapper);
         this.ordenRepository = ordenRepository;
         this.orden_detalleRepository = orden_detalleRepository;
-        this.webClient = webClient;
+        this.webClientBuilder = webClientBuilder;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
         //VERIFICAR STOCK VÍA SKUCODE
         List<String> skuCodes = odto.stream().map(odtos -> odtos.getSkuCode()).toList();
         //COMUNICACION CON EL MICROSERVICIO INVENTARIO
-        InventarioStockDto[] inventarioStockDto = webClient.get()
-                .uri("http://localhost:8083/api/v1/inventario/stock",
+        InventarioStockDto[] inventarioStockDto = webClientBuilder.build().get()
+                .uri("http://inventory-service/api/v1/inventario/stock",
                         uriBuilder -> uriBuilder.queryParam("skucode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventarioStockDto[].class)
