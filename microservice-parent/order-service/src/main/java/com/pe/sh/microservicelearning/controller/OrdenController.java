@@ -2,9 +2,7 @@ package com.pe.sh.microservicelearning.controller;
 
 import com.pe.sh.microservicelearning.dto.OrdenDto;
 import com.pe.sh.microservicelearning.dto.OrdenYDetallesDto;
-import com.pe.sh.microservicelearning.dto.Orden_detalleDto;
 import com.pe.sh.microservicelearning.service.OrdenService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +61,6 @@ public class OrdenController {
     }
     
     @PostMapping("/orderAndDetails")
-    @CircuitBreaker(name = "inventarioCB")
     public ResponseEntity<OrdenDto> crearOrdenYDetalles(
             @RequestBody OrdenYDetallesDto odtdto) {
         return new ResponseEntity<>(ordenService.crearOrdenYDetalles(odtdto), HttpStatus.OK);
