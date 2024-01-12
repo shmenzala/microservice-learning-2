@@ -7,6 +7,7 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,16 +68,19 @@ public class OrdenController {
     @PostMapping("/orderAndDetails")
     @CircuitBreaker(name = "inventarioCB", fallbackMethod = "fallBackMethodInventario")
     @TimeLimiter(name = "inventarioCB")
-    public ResponseEntity<OrdenDto> crearOrdenYDetalles(
+    public CompletableFuture<OrdenDto> crearOrdenYDetalles(
             @RequestBody OrdenYDetallesDto odtdto) {
-        return new ResponseEntity<>(ordenService.crearOrdenYDetalles(odtdto), HttpStatus.OK);
+        //return new ResponseEntity<>(ordenService.crearOrdenYDetalles(odtdto), HttpStatus.OK);
+        return CompletableFuture.supplyAsync(() -> ordenService.crearOrdenYDetalles(odtdto));
     }
 
-    public ResponseEntity<String> fallBackMethodInventario(@RequestBody OrdenYDetallesDto odtdto, WebClientRequestException re) {
-        return new ResponseEntity<>("Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re, HttpStatus.OK);
+    public CompletableFuture<String> fallBackMethodInventario(@RequestBody OrdenYDetallesDto odtdto, WebClientRequestException re) {
+        //return new ResponseEntity<>("Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re, HttpStatus.OK);
+        return CompletableFuture.supplyAsync(() -> "Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re);
     }
 
-    public ResponseEntity<String> fallBackMethodInventario(@RequestBody OrdenYDetallesDto odtdto, CallNotPermittedException re) {
-        return new ResponseEntity<>("Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re, HttpStatus.OK);
+    public CompletableFuture<String> fallBackMethodInventario(@RequestBody OrdenYDetallesDto odtdto, CallNotPermittedException re) {
+        //return new ResponseEntity<>("Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re, HttpStatus.OK);
+        return CompletableFuture.supplyAsync(() -> "Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re);
     }
 }
