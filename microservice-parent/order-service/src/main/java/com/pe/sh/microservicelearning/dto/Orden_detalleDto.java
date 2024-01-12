@@ -1,6 +1,5 @@
 package com.pe.sh.microservicelearning.dto;
 
-import com.pe.sh.microservicelearning.model.Orden;
 import java.math.BigDecimal;
 
 /**
@@ -66,8 +65,4 @@ public class Orden_detalleDto {
         this.orden = orden;
     }
 
-    
-    
-    
-    
 }
