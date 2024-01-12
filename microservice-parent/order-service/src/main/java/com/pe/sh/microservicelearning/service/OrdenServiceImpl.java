@@ -6,6 +6,7 @@ import com.pe.sh.microservicelearning.dto.OrdenDto;
 import com.pe.sh.microservicelearning.dto.OrdenYDetallesDto;
 import com.pe.sh.microservicelearning.dto.Orden_detalleDto;
 import com.pe.sh.microservicelearning.dto.Orden_detalleResponseDto;
+import com.pe.sh.microservicelearning.exceptions.Order_serviceException;
 import com.pe.sh.microservicelearning.model.Orden;
 import com.pe.sh.microservicelearning.model.Orden_detalle;
 import com.pe.sh.microservicelearning.repository.OrdenRepository;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -113,7 +115,9 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
 
             return ordenDto;
         } else {
-            throw new IllegalArgumentException("PRODUCTO SIN STOCK, por favor, intentar más tarde.");
+            System.out.println("PRODUCTO SIN STOCK, por favor, intentar más tarde.");
+            //throw new IllegalArgumentException("PRODUCTO SIN STOCK, por favor, intentar más tarde.");
+            throw new Order_serviceException(HttpStatus.BAD_REQUEST, "PRODUCTO SIN STOCK, por favor, intentar más tarde.");
         }
 
     }
