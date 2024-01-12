@@ -3,7 +3,9 @@ package com.pe.sh.microservicelearning.controller;
 import com.pe.sh.microservicelearning.dto.OrdenDto;
 import com.pe.sh.microservicelearning.dto.OrdenYDetallesDto;
 import com.pe.sh.microservicelearning.service.OrdenService;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 /**
  *
@@ -56,16 +59,24 @@ public class OrdenController {
 
     @DeleteMapping
     public ResponseEntity<String> eliminarOrden(
-    @PathVariable(value = "codigood") String codigood){
+            @PathVariable(value = "codigood") String codigood) {
         ordenService.delete(codigood);
         return ResponseEntity.ok("Orden eliminada con éxito.");
     }
-    
+
     @PostMapping("/orderAndDetails")
-    @CircuitBreaker(name = "inventarioCB")
+    @CircuitBreaker(name = "inventarioCB", fallbackMethod = "fallBackMethodInventario")
+    @TimeLimiter(name = "inventarioCB")
     public ResponseEntity<OrdenDto> crearOrdenYDetalles(
             @RequestBody OrdenYDetallesDto odtdto) {
         return new ResponseEntity<>(ordenService.crearOrdenYDetalles(odtdto), HttpStatus.OK);
     }
-    
+
+    public ResponseEntity<String> fallBackMethodInventario(@RequestBody OrdenYDetallesDto odtdto, WebClientRequestException re) {
+        return new ResponseEntity<>("Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re, HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> fallBackMethodInventario(@RequestBody OrdenYDetallesDto odtdto, CallNotPermittedException re) {
+        return new ResponseEntity<>("Oops! Algo salió mal, por favor crear la orden más tarde. \n" + re, HttpStatus.OK);
+    }
 }
