@@ -66,10 +66,10 @@ public class OrdenController {
         return ResponseEntity.ok("Orden eliminada con éxito.");
     }
 
+//    @TimeLimiter(name = "inventarioCB")
+//    @Retry(name = "inventarioCB")
     @PostMapping("/orderAndDetails")
     @CircuitBreaker(name = "inventarioCB", fallbackMethod = "fallBackMethodInventario")
-    @TimeLimiter(name = "inventarioCB")
-    @Retry(name = "inventarioCB")
     public CompletableFuture<OrdenDto> crearOrdenYDetalles(
             @RequestBody OrdenYDetallesDto odtdto) {
         //return new ResponseEntity<>(ordenService.crearOrdenYDetalles(odtdto), HttpStatus.OK);
