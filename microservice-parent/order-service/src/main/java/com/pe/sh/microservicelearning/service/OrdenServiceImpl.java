@@ -6,6 +6,7 @@ import com.pe.sh.microservicelearning.dto.OrdenDto;
 import com.pe.sh.microservicelearning.dto.OrdenYDetallesDto;
 import com.pe.sh.microservicelearning.dto.Orden_detalleDto;
 import com.pe.sh.microservicelearning.dto.Orden_detalleResponseDto;
+import com.pe.sh.microservicelearning.event.OrderPlacedEvent;
 import com.pe.sh.microservicelearning.exceptions.Order_serviceException;
 import com.pe.sh.microservicelearning.model.Orden;
 import com.pe.sh.microservicelearning.model.Orden_detalle;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -33,12 +35,15 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
     private final Orden_detalleRepository orden_detalleRepository;
 
     private final WebClient.Builder webClientBuilder;
+    
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
-    public OrdenServiceImpl(OrdenRepository ordenRepository, Orden_detalleRepository orden_detalleRepository, WebClient.Builder webClientBuilder, ModelMapper modelMapper) {
+    public OrdenServiceImpl(OrdenRepository ordenRepository, Orden_detalleRepository orden_detalleRepository, WebClient.Builder webClientBuilder, KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate, ModelMapper modelMapper) {
         super(modelMapper);
         this.ordenRepository = ordenRepository;
         this.orden_detalleRepository = orden_detalleRepository;
         this.webClientBuilder = webClientBuilder;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -75,7 +80,7 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
 
     @Override
     public OrdenDto crearOrdenYDetalles(OrdenYDetallesDto odtdto) {
-        //CREAR ORDEN
+        //OBTENCION DE DATA
         OrdenDto dto = odtdto.getDto();
         List<Orden_detalleDto> odto = odtdto.getOdto();
         //VERIFICAR STOCK VÍA SKUCODE
@@ -92,6 +97,7 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
                 .allMatch(invStock -> invStock.isIsInStock());
         
         if (stockResult) {
+            //CREAR ORDEN
             Orden orden = toEntity(dto, Orden.class);
 
             if (dto.getNum_orden().trim().equals("") || dto.getNum_orden().trim() == null) {
@@ -113,6 +119,8 @@ public class OrdenServiceImpl extends Mapper<Orden, OrdenDto> implements OrdenSe
 
             OrdenDto ordenDto = new OrdenDto(orden.getCodigood(), orden.getNum_orden(), odtro);
 
+            kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(ordenDto.getNum_orden()));
+            
             return ordenDto;
         } else {
             System.out.println("PRODUCTO SIN STOCK, por favor, intentar más tarde.");
