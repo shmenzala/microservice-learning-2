@@ -1,25 +1,16 @@
 package com.pe.sh.notificationservice;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  *
  * @author shmen
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderPlacedEvent {
-
     private String num_orden;
-
-    public OrderPlacedEvent() {
-    }
-
-    public OrderPlacedEvent(String num_orden) {
-        this.num_orden = num_orden;
-    }
-
-    public String getNum_orden() {
-        return num_orden;
-    }
-
-    public void setNum_orden(String num_orden) {
-        this.num_orden = num_orden;
-    }
 }
